@@ -157,9 +157,9 @@
 		store.disabled = true
 	}
 	store.enabled = !store.disabled
-	
+
 	if (typeof module != 'undefined' && module.exports) { module.exports = store }
-	else if (typeof define === 'function' && define.amd) { define(store) }
+	// else if (typeof define === 'function' && define.amd) { define(store) }
 	else { win.store = store }
-	
+
 })(this.window || global);
