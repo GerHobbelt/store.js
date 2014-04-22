@@ -2,7 +2,6 @@
 	var store = {},
 		doc = win.document,
 		localStorageName = 'localStorage',
-		namespace = '__storejs__',
 		storage
 
 	store.disabled = false
@@ -21,6 +20,7 @@
 		store.set(key, val)
 	}
 	store.getAll = function() {}
+	store.forEach = function() {}
 
 	store.serialize = function(value) {
 		return JSON.stringify(value)
@@ -51,11 +51,16 @@
 		store.clear = function() { storage.clear() }
 		store.getAll = function() {
 			var ret = {}
-			for (var i=0; i<storage.length; ++i) {
-				var key = storage.key(i)
-				ret[key] = store.get(key)
-			}
+			store.forEach(function(key, val) {
+				ret[key] = val
+			})
 			return ret
+		}
+		store.forEach = function(callback) {
+			for (var i=0; i<storage.length; i++) {
+				var key = storage.key(i)
+				callback(key, store.get(key))
+			}
 		}
 	} else if (doc.documentElement.addBehavior) {
 		var storageOwner,
@@ -128,25 +133,33 @@
 			storage.save(localStorageName)
 		})
 		store.getAll = withIEStorage(function(storage) {
-			var attributes = storage.XMLDocument.documentElement.attributes
 			var ret = {}
+			store.forEach(function(key, val) {
+				ret[key] = val
+			})
+			return ret
+		})
+		store.forEach = withIEStorage(function(storage, callback) {
+			var attributes = storage.XMLDocument.documentElement.attributes
 			for (var i=0, attr; attr=attributes[i]; ++i) {
 				var key = ieKeyFix(attr.name)
-				ret[attr.name] = store.deserialize(storage.getAttribute(key))
+				callback(ret[attr.name], store.deserialize(storage.getAttribute(key)))
 			}
-			return ret
 		})
 	}
 
 	try {
-		store.set(namespace, namespace)
-		if (store.get(namespace) != namespace) { store.disabled = true }
-		store.remove(namespace)
+		var testKey = '__storejs__'
+		store.set(testKey, testKey)
+		if (store.get(testKey) != testKey) { store.disabled = true }
+		store.remove(testKey)
 	} catch(e) {
 		store.disabled = true
 	}
 	store.enabled = !store.disabled
+	
 	if (typeof module != 'undefined' && module.exports) { module.exports = store }
 	else if (typeof define === 'function' && define.amd) { define(store) }
 	else { win.store = store }
+	
 })(this.window || global);
