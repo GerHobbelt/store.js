@@ -74,7 +74,7 @@
 		try {
 			storageContainer = new ActiveXObject('htmlfile')
 			storageContainer.open()
-			storageContainer.write('<s' + 'cript>document.w=window</s' + 'cript><iframe src="/favicon.ico"></frame>')
+			storageContainer.write('<s' + 'cript>document.w=window</s' + 'cript><iframe src="/favicon.ico"></iframe>')
 			storageContainer.close()
 			storageOwner = storageContainer.w.frames[0].document
 			storage = storageOwner.createElement('div')
@@ -147,8 +147,7 @@
 		store.disabled = true
 	}
 	store.enabled = !store.disabled
-
-	if (typeof module != 'undefined' && typeof module != 'function') { module.exports = store }
+	if (typeof module != 'undefined' && module.exports) { module.exports = store }
 	else if (typeof define === 'function' && define.amd) { define(store) }
 	else { this.store = store }
 })();
