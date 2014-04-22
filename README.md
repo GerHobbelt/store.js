@@ -25,94 +25,62 @@ alert(user.name + ' likes ' + user.likes)
 
 // Get all stored values
 store.getAll().user.name == 'marcus'
+
+// Loop over all stored values
+store.forEach(function(val, key) {
+	console.log(key, '==', val)
+})
 ```
 
-store.js depends on JSON for serialization.
 
 How does it work?
 ------------------
 store.js uses localStorage when available, and falls back on the userData behavior in IE6 and IE7. No flash to slow down your page load. No cookies to fatten your network requests.
+
+store.js depends on JSON for serialization to disk.
+
+
+Installation
+------------
+Just grab [store.min.js] or [store+json2.min.js] and include them with a script tag.
+
+
+`store.enabled` flag
+--------------------
+If your product depends on store.js, you must check the `store.enabled` flag first:
+
+```html
+<script src="store.min.js"></script>
+<script>
+	init()
+	function init() {
+		if (!store.enabled) {
+			alert('Local storage is not supported by your browser. Please disabled "Private Mode", or upgrade to a modern browser')
+			return
+		}
+		var user = store.get('user')
+		// ... and so on ...
+	}
+</script>
+```
+
+LocalStorage may sometimes appear to be available but throw an error when used. An example is Safari's private browsing mode. Other browsers allow the user to temporarily disable localStorage. Store.js detects these conditions and sets the `store.enabled` flag appropriately.
+
 
 Screencast
 -----------
 [Introductory Screencast to Store.js](http://javascriptplayground.com/blog/2012/06/javascript-local-storage-store-js-tutorial) by Jack Franklin.
 
 
-`store.enabled` - check that localStorage is available
--------------------------------------------------------
-To check that persistance is available, you can use the `store.enabled` flag:
+Contributors & Forks
+--------------------
+Contributors: https://github.com/marcuswestin/store.js/graphs/contributors
 
-```js
-if( store.enabled ) {
-	console.log("localStorage is available");
-} else {
-	//time to fallback
-}
-```
-
-Please note that `store.disabled` does exist but is deprecated in favour of `store.enabled`.
-
-There are conditions where localStorage may appear to be available but will throw an error when used. For example, Safari's private browsing mode does this, and some browser allow the user to temporarily disable localStorage. Store.js detects these conditions and sets the `store.enabled` flag accordingly.
+Forks: https://github.com/marcuswestin/store.js/network/members
 
 
-
-Serialization
--------------
-localStorage, when used without store.js, calls toString on all stored values. This means that you can't conveniently store and retrieve numbers, objects or arrays:
-
-```js
-localStorage.myage = 24
-localStorage.myage !== 24
-localStorage.myage === '24'
-
-localStorage.user = { name: 'marcus', likes: 'javascript' }
-localStorage.user === "[object Object]"
-
-localStorage.tags = ['javascript', 'localStorage', 'store.js']
-localStorage.tags.length === 32
-localStorage.tags === "javascript,localStorage,store.js"
-```
-
-What we want (and get with store.js) is
-
-```js
-store.set('myage', 24)
-store.get('myage') === 24
-
-store.set('user', { name: 'marcus', likes: 'javascript' })
-alert("Hi my name is " + store.get('user').name + "!")
-
-store.set('tags', ['javascript', 'localStorage', 'store.js'])
-alert("We've got " + store.get('tags').length + " tags here")
-```
-
-The native serialization engine of javascript is JSON. Rather than leaving it up to you to serialize and deserialize your values, store.js uses JSON.stringify() and JSON.parse() on each call to store.set() and store.get(), respectively.
-
-Some browsers do not have native support for JSON. For those browsers you should include [JSON.js](non-minified copy is included in this repo).
-
-No sessionStorage/auto-expiration?
-----------------------------------
-No. I believe there is no way to provide sessionStorage semantics cross browser. However, it is trivial to expire values on read on top of store.js:
-
-```js
-var storeWithExpiration = {
-	set: function(key, val, exp) {
-		store.set(key, { val:val, exp:exp, time:new Date().getTime() })
-	},
-	get: function(key) {
-		var info = store.get(key)
-		if (!info) { return null }
-		if (new Date().getTime() - info.time > info.exp) { return null }
-		return info.val
-	}
-}
-storeWithExpiration.set('foo', 'bar', 1000)
-setTimeout(function() { console.log(storeWithExpiration.get('foo')) }, 500) // -> "bar"
-setTimeout(function() { console.log(storeWithExpiration.get('foo')) }, 1500) // -> null
-```
-
-Node.js
--------
+In node.js
+----------
 store.js works as expected in node.js, assuming that global.localStorage has been set:
 
 ```
@@ -122,15 +90,6 @@ store.set('foo', 1)
 console.log(store.get('foo'))
 ```
 
-Run tests
----------
-For a browser: Go to http://marcuswestin.github.io/store.js/test.html to test the latest version of store.js.
-
-For a browser, locally: do `npm install node-static && ./node_modules/node-static/bin/cli.js` and go to http://localhost:8080
-
-(Note that test.html must be served over http:// or https://. This is because localStore does not work in some browsers when using the file:// protocol.)
-
-For Nodejs: do `npm install . localStorage && node test-node.js`
 
 Supported browsers
 ------------------
@@ -167,6 +126,7 @@ Supported browsers
 
 *Important note:* In IE6 and IE7, many special characters are not allowed in the keys used to store any key/value pair. With [@mferretti](https://github.com/mferretti)'s help, there's a suitable workaround which replaces most forbidden characters with "___".
 
+
 Storage limits
 --------------
  - IE6 & IE7: 1MB total, but 128kb per "path" or "document" (see http://msdn.microsoft.com/en-us/library/ms531424(v=vs.85).aspx)
@@ -180,33 +140,75 @@ Unsupported browsers
  - Opera 9: don't know if there is synchronous api for storing data locally
  - Firefox 1.5: don't know if there is synchronous api for storing data locally
 
-Forks
-----
- - Original: https://github.com/marcuswestin/store.js
- - Sans JSON support (simple key/values only): https://github.com/cloudhead/store.js
- - jQueryfied version: https://github.com/whitmer/store.js 
- - Lint.js passing version (with semi-colons): https://github.com/StevenBlack/store.js
- 
-  [JSON.js]: http://www.json.org/json2.js
 
-Contributors
-------------
- - [@marcuswestin](https://github.com/marcuswestin) Marcus Westin (Author)
- - [@mjpizz](https://github.com/mjpizz) Matt Pizzimenti
- - [@StevenBlack](https://github.com/StevenBlack) Steven Black
- - [@ryankirkman](https://github.com/ryankirkman) Ryan Kirkman
- - [@pereckerdal](https://github.com/pereckerdal) Per Eckerdal
- - [@manuelvanrijn](https://github.com/manuelvanrijn) Manuel van Rijn
- - [@StuPig](https://github.com/StuPig) Shou Qiang
- - [@blq](https://github.com/blq) Fredrik Blomqvist
- - [@tjarratt](https://github.com/tjarratt) Tim Jarratt
- - [@gregwebs](https://github.com/gregwebs) Greg Weber
- - [@jackfranklin](https://github.com/jackfranklin) Jack Franklin
- - [@pauldwaite](https://github.com/pauldwaite) Paul D. Waite
- - [@mferretti](https://github.com/mferretti) Marco Ferretti
- - [@whitehat101](https://github.com/whitehat101) Jeremy Ebler
- - [@lepture](https://github.com/lepture) Hsiaoming Yang
- - [@lovejs](https://github.com/lovejs) Ruslan G
- - [@rmg](https://github.com/rmg) Ryan Graham
- - [@MatthewMueller](https://github.com/MatthewMueller) Matthew Mueller
- - [@robinator](https://github.com/robinator) Rob Law
+Some notes on serialization
+---------------------------
+localStorage, when used without store.js, calls toString on all stored values. This means that you can't conveniently store and retrieve numbers, objects or arrays:
+
+```js
+localStorage.myage = 24
+localStorage.myage !== 24
+localStorage.myage === '24'
+
+localStorage.user = { name: 'marcus', likes: 'javascript' }
+localStorage.user === "[object Object]"
+
+localStorage.tags = ['javascript', 'localStorage', 'store.js']
+localStorage.tags.length === 32
+localStorage.tags === "javascript,localStorage,store.js"
+```
+
+What we want (and get with store.js) is
+
+```js
+store.set('myage', 24)
+store.get('myage') === 24
+
+store.set('user', { name: 'marcus', likes: 'javascript' })
+alert("Hi my name is " + store.get('user').name + "!")
+
+store.set('tags', ['javascript', 'localStorage', 'store.js'])
+alert("We've got " + store.get('tags').length + " tags here")
+```
+
+The native serialization engine of javascript is JSON. Rather than leaving it up to you to serialize and deserialize your values, store.js uses JSON.stringify() and JSON.parse() on each call to store.set() and store.get(), respectively.
+
+Some browsers do not have native support for JSON. For those browsers you should include [JSON.js](non-minified copy is included in this repo).
+
+
+No sessionStorage/auto-expiration?
+----------------------------------
+No. I believe there is no way to provide sessionStorage semantics cross browser. However, it is trivial to expire values on read on top of store.js:
+
+```js
+var storeWithExpiration = {
+	set: function(key, val, exp) {
+		store.set(key, { val:val, exp:exp, time:new Date().getTime() })
+	},
+	get: function(key) {
+		var info = store.get(key)
+		if (!info) { return null }
+		if (new Date().getTime() - info.time > info.exp) { return null }
+		return info.val
+	}
+}
+storeWithExpiration.set('foo', 'bar', 1000)
+setTimeout(function() { console.log(storeWithExpiration.get('foo')) }, 500) // -> "bar"
+setTimeout(function() { console.log(storeWithExpiration.get('foo')) }, 1500) // -> null
+```
+
+
+Testing
+-------
+For a browser: Go to http://marcuswestin.github.io/store.js/test.html to test the latest version of store.js.
+
+For a browser, locally: do `npm install node-static && ./node_modules/node-static/bin/cli.js` and go to http://localhost:8080
+
+(Note that test.html must be served over http:// or https://. This is because localStore does not work in some browsers when using the file:// protocol.)
+
+For Nodejs: do `npm install . localStorage && node test-node.js`
+
+
+  [JSON.js]: http://www.json.org/json2.js
+  [store.min.js]: https://raw.github.com/marcuswestin/store.js/master/store.min.js
+  [store+json2.min.js]: https://raw.github.com/marcuswestin/store.js/master/store+json2.min.js
