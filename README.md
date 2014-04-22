@@ -26,7 +26,7 @@ alert(user.name + ' likes ' + user.likes)
 // Get all stored values
 store.getAll().user.name == 'marcus'
 ```
-	
+
 store.js depends on JSON for serialization.
 
 How does it work?
@@ -111,11 +111,26 @@ setTimeout(function() { console.log(storeWithExpiration.get('foo')) }, 500) // -
 setTimeout(function() { console.log(storeWithExpiration.get('foo')) }, 1500) // -> null
 ```
 
-Tests
------
-Go to test.html in your browser. (Or http://marcuswestin.github.io/store.js/test.html to test the latest version of store.js)
+Node.js
+-------
+store.js works as expected in node.js, assuming that global.localStorage has been set:
 
-(Note that test.html must be served over http:// or https://. This is because localStore does not work in some browsers when using the file:// protocol)
+```
+global.localStorage = require('localStorage')
+var store = require('./store')
+store.set('foo', 1)
+console.log(store.get('foo'))
+```
+
+Run tests
+---------
+For a browser: Go to http://marcuswestin.github.io/store.js/test.html to test the latest version of store.js.
+
+For a browser, locally: do `npm install node-static && ./node_modules/node-static/bin/cli.js` and go to http://localhost:8080
+
+(Note that test.html must be served over http:// or https://. This is because localStore does not work in some browsers when using the file:// protocol.)
+
+For Nodejs: do `npm install . localStorage && node test-node.js`
 
 Supported browsers
 ------------------
@@ -142,6 +157,7 @@ Supported browsers
  - Tested in Opera 10
  - Tested in Opera 11
  - Tested in Opera 12
+ - Tested in Node.js v0.10.4 (with https://github.com/coolaj86/node-localStorage 1.0.2)
 
 *Saucelabs.com rocks* Extensive browser testing of store.js is possible thanks to Saucelabs.com. Check them out, they're awesome.
 
