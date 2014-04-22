@@ -21,7 +21,10 @@ store.js exposes a simple API for cross browser local storage
 	// Get the stored object - store.js uses JSON.parse under the hood
 	var user = store.get('user')
 	alert(user.name + ' likes ' + user.likes)
-
+	
+	// Get all stored values
+	store.getAll().user.name == 'marcus'
+	
 store.js depends on JSON for serialization.
 
 How does it work?
@@ -133,13 +136,6 @@ Forks
  - jQueryfied version: https://github.com/whitmer/store.js 
  - Lint.js passing version (with semi-colons): https://github.com/StevenBlack/store.js
  
-TODO
-----
- - What are the storage capacities/restrictions per browser?
- - I believe underlying APIs can throw under certain conditions. Where do we need try/catch?
- - Test different versions of Opera 10.X explicitly
-
-
   [JSON.js]: http://www.json.org/json2.js
 
 Contributors
