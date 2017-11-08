@@ -2,7 +2,7 @@ var engine  = require('../src/store-engine');
 var plugins = [
         require('../plugins/json2'),
         require('../plugins/expire'),
-        //require('../plugins/compression'),  charCodeAt bug on ie 11
+        require('../plugins/compression'),
         require('../plugins/events'),
         require('../plugins/observe'),
         require('../plugins/update')
