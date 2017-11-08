@@ -2,20 +2,20 @@
   "name": "store",
   "version": "2.0.13",
   "description": "A localStorage wrapper for all browsers without using cookies or flash. Uses localStorage, globalStorage, and userData behavior under the hood",
-  "main": "dist/store.legacy.js",
+  "main": "dist/store.all.js",
   "scripts": {
     "test": "make test"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/marcuswestin/store.js.git"
+    "url": "git://github.com/wind930/store.js.git"
   },
   "author": "Marcus Westin <narcvs@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "http://github.com/marcuswestin/store.js/issues"
   },
-  "homepage": "https://github.com/marcuswestin/store.js#readme",
+  "homepage": "https://github.com/wind930/store.js#readme",
   "devDependencies": {
     "babel-preset-es2015": "^6.22.0",
     "babelify": "^7.3.0",
