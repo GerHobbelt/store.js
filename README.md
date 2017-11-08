@@ -185,6 +185,11 @@ Choose which build is right for you!
 
 - [store.everything.min.js](dist/store.everything.min.js): All the plugins, all the storages. [Source](dist/store.everything.js)
 - [store.legacy.min.js](dist/store.legacy.min.js): Full support for all tested browsers. Add plugins separately. [Source](dist/store.legacy.js)
+- [store.all.min.js](dist/store.all.min.js): Full support for all tested browsers. Add plugins separately. [Source](dist/store.all.js) contain localStorage, cookieStorage, sessionStorage, memoryStorage
+    - store.storage
+    - store.cookie
+    - store.session
+    - store.memory
 - [store.modern.min.js](dist/store.modern.min.js): Full support for all modern browsers. Add plugins separately. [Source](dist/store.modern.js)
 - [store.v1-backcompat.min.js](dist/store.v1-backcompat.min.js): Full backwards compatibility with [store.js v1](https://github.com/marcuswestin/store.js/releases/tag/v1.3.20). [Source](dist/store.v1-backcompat.js)
 
