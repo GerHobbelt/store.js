@@ -1,4 +1,4 @@
-Store.js
+Store.js1
 ========
 
 Cross-browser storage for all use cases, used across the web.
